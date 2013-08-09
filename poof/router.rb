@@ -3,58 +3,47 @@ require 'active_support/core_ext/string/inflections'
 class Router
 
   attr_reader :env
+  attr_accessor :route
 
   def initialize(env)
-#    ap env
+    ap env
     @env = env
-  end
-
-  def params
-    (id ? {:id => id} : {}).merge(env['POST_DATA'] || {})
   end
 
   def call
     handler.new(self).send(method)
   end
 
+  def params
+    ActiveSupport::HashWithIndifferentAccess.new(route.except(:action, :controller).merge(post_data))
+  end
 
   private
+
+  def route
+    $routes.recognize_path(env['PATH_INFO'], {:method => method.upcase})
+  end
+
 
   def handler
     controller.module_eval(action)
   end
 
-  def path_array
-    env['PATH_INFO'].split('/')
-  end
-
-  def id
-    path_array.map(&:to_i).select{|x| x > 0 }[0]
-  end
 
   def controller
-    "#{path_array[1]}Controller".camelize.constantize
+    "#{route[:controller]}Controller".camelize.constantize
   end
 
   def action
-    return "index".camelize if get?
-    return "create".camelize if post?
-    return "update".camelize if put?
+    route[:action].camelize
   end
 
   def method
     env['REQUEST_METHOD'].downcase
   end
 
-  def get?
-    method.downcase == "get"
+  def post_data
+    env['POST_DATA'] || {}
   end
 
-  def post?
-    method.downcase == "post"
-  end
-
-  def put?
-    method.downcase == "put"
-  end
 end

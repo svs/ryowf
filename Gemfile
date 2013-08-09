@@ -1,14 +1,17 @@
 source 'https://rubygems.org'
 
-gem 'chess'
+gem 'actionpack', '~> 4.0.0'
 gem 'rack'
 gem 'rack-contrib'
-gem 'http_router'
-gem 'awesome_print'
-gem 'active_support'
-gem 'thin'
+
+
+gem 'chess'
 gem 'data_mapper'
 gem 'dm-sqlite-adapter'
+
+gem 'awesome_print'
+gem 'thin'
+
 
 group :test do
   gem 'rspec'

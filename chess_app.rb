@@ -1,3 +1,5 @@
+require 'bundler/setup'
+require 'action_dispatch'
 require 'chess'
 require 'data_mapper'
 require 'rack'
@@ -10,6 +12,11 @@ require_relative './models.rb'
 DataMapper.setup(:default, 'sqlite::memory:')
 DataMapper.auto_migrate!
 DataMapper.finalize
+
+$routes = ActionDispatch::Routing::RouteSet.new
+$routes.draw do
+  resources :games, :only => [:index, :create, :show, :update]
+end
 
 
 class ChessApp

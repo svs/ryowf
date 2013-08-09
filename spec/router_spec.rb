@@ -24,7 +24,7 @@ describe "routing" do
 
   specify { Router.new(Rack::MockRequest.env_for('/games', {'REQUEST_METHOD' => 'get'})).should route_to(GamesController::Index) }
   specify { Router.new(Rack::MockRequest.env_for('/games', {'REQUEST_METHOD' => 'post'})).should route_to(GamesController::Create) }
-  specify { Router.new(Rack::MockRequest.env_for('/games/2/', {'REQUEST_METHOD' => 'put'})).should route_to(GamesController::Update).with(:id => 2) }
+  specify { Router.new(Rack::MockRequest.env_for('/games/2/', {'REQUEST_METHOD' => 'PUT'})).should route_to(GamesController::Update).with("id" => "2") }
 end
 
 
