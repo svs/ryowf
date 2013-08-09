@@ -2,12 +2,11 @@ require 'active_support/core_ext/string/inflections'
 
 class Router
 
-  attr_reader :env
-  attr_accessor :route
+  attr_reader :env, :route
 
-  def initialize(env)
-    ap env
+  def initialize(routes, env)
     @env = env
+    @routes = routes
   end
 
   def call
@@ -21,14 +20,13 @@ class Router
   private
 
   def route
-    $routes.recognize_path(env['PATH_INFO'], {:method => method.upcase})
+    @routes.recognize_path(env['PATH_INFO'], {:method => method.upcase})
   end
 
 
   def handler
     controller.module_eval(action)
   end
-
 
   def controller
     "#{route[:controller]}Controller".camelize.constantize

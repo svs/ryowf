@@ -13,17 +13,22 @@ DataMapper.setup(:default, 'sqlite::memory:')
 DataMapper.auto_migrate!
 DataMapper.finalize
 
-$routes = ActionDispatch::Routing::RouteSet.new
-$routes.draw do
-  resources :games, :only => [:index, :create, :show, :update]
-end
-
 
 class ChessApp
+
+  def self.routes
+    @routes ||= ActionDispatch::Routing::RouteSet.new.tap do |r|
+      r.draw do
+        resources :games, :only => [:index, :create, :show, :update]
+      end
+    end
+  end
+
   def call(env)
+
     env.update('POST_DATA' => Rack::Utils.parse_nested_query(env['rack.input'].read))
     env['rack.input'].rewind
-    Router.new(env).call
+    Router.new(self.class.routes, env).call
   end
 end
 
