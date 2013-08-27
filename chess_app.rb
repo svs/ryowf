@@ -41,6 +41,10 @@ module GamesController
       [200, {}, Game.all.to_json]
     end
 
+    def params
+      super.except(:deleted_at)
+    end
+
   end
 
   class Create < ControllerAction
